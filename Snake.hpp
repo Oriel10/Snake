@@ -4,6 +4,7 @@
 #include <iostream>
 #include <deque>
 #include <unordered_map>
+#include "Common.hpp"
 
 struct pair_hash {
   template <class T1, class T2>
@@ -16,15 +17,14 @@ struct pair_hash {
 
 class Snake {
 private:
-  using Position = std::pair<int, int>;
-  using Direction = std::pair<int, int>;
   using isLocated = bool;
 
-  const char snakeBodyMark = '*';
+  const char snakeBodyMark = 'O';
   int boardDimension;
   Position initialPosition;
   std::unordered_map<Position, isLocated, pair_hash> positionsSet;
   std::deque<Position> snakeBody;
+  Position foodPosition;
 
 public:
   Snake(int boardDimension);
@@ -33,15 +33,17 @@ public:
   Position getTail() const;
   void deleteTail();
   void addHead(Position newHeadPosition);
-  void moveUp();
-  void moveDown();
-  void moveRight();
-  void moveLeft();
-  void Move(Direction d);
+  bool moveUp();
+  bool moveDown();
+  bool moveRight();
+  bool moveLeft();
+  bool move(Direction d);
   void gameLost() const;
-  bool checkLegitPosition(Position headPosition);
+  bool checkLegitPosition(Position p);
   bool isSnakeAt(int x, int y) const;
+  bool isSnakeAt(Position p) const;
   char getBodyMark() const;
+  void setFoodPosition(Position p);
 };
 
 #endif // SNAKE_HPP

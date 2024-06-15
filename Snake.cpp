@@ -1,5 +1,5 @@
-#include "Snake.h"
 #include <assert.h>
+#include "Snake.hpp"
 
 using namespace std;
 
@@ -9,11 +9,11 @@ Snake::Snake(int boardDimension) : boardDimension(boardDimension) {
   snakeBody.push_front(initialPosition);
 }
 
-Snake::Position Snake::getHead() const {
+Position Snake::getHead() const {
   return snakeBody.front();
 }
 
-Snake::Position Snake::getTail() const {
+Position Snake::getTail() const {
   return snakeBody.back();
 }
 
@@ -27,27 +27,27 @@ void Snake::addHead(Position newHeadPosition) {
   positionsSet[newHeadPosition] = true;
 }
 
-void Snake::moveUp() {
+bool Snake::moveUp() {
   Direction up{-1,0};
-  Move(up);
+  return move(up);
 }
 
-void Snake::moveDown() {
+bool Snake::moveDown() {
   Direction down{1,0};
-  Move(down);
+  return move(down);
 }
 
-void Snake::moveRight() {
+bool Snake::moveRight() {
   Direction right{0,1};
-  Move(right);
+  return move(right);
 }
 
-void Snake::moveLeft() {
+bool Snake::moveLeft() {
   Direction left{0,-1};
-  Move(left);
+  return move(left);
 }
 
-void Snake::Move(Direction d) {
+bool Snake::move(Direction d) {
   assert(d.first == 0 || d.second == 0);
   assert(d.first != 0 || d.second != 0);
 
@@ -55,8 +55,17 @@ void Snake::Move(Direction d) {
   if(!checkLegitPosition(newHeadPosition)) {
     gameLost();
   }
-  addHead(newHeadPosition);
-  deleteTail();
+  // Snake at the food
+  if(newHeadPosition == foodPosition) {
+    addHead(newHeadPosition);
+    return true;
+  }
+  // Snake did not eat the food
+  else {
+    addHead(newHeadPosition);
+    deleteTail();
+    return false;
+  }
 }
 
 void Snake::gameLost() const {
@@ -84,6 +93,14 @@ bool Snake::isSnakeAt(int x, int y) const {
   return positionsSet.find({x, y}) != positionsSet.end();
 }
 
+bool Snake::isSnakeAt(Position pos) const {
+  return positionsSet.find(pos) != positionsSet.end();
+}
+
 char Snake::getBodyMark() const {
   return snakeBodyMark;
+}
+
+void Snake::setFoodPosition(Position position) {
+  foodPosition = position;
 }

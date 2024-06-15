@@ -11,18 +11,13 @@
 #include <fcntl.h>
 #endif
 
-#include "Snake.h"
+// #include "Snake.hpp"
+// #include "Board.hpp"
+#include "SnakeGame.hpp"
 
 using namespace std;
 
-void initializeBoard(vector<vector<char>>& board, int dim) {
-    for(int i = 0; i < dim; i++){
-        vector<char> row(dim, ' ');
-        board.push_back(row);
-    }
-}
-
-void displayBoard(const std::vector<std::vector<char>>& board, const Snake& snake, int dim) {
+void displayBoard(const SnakeGame& game, int dim) {
     std::cout << "+";
     for (int j = 0; j < dim; ++j) {
         std::cout << "---+";
@@ -32,9 +27,16 @@ void displayBoard(const std::vector<std::vector<char>>& board, const Snake& snak
     for (int i = 0; i < dim; ++i) {
         std::cout << "|";
         for (int j = 0; j < dim; ++j) {
-            bool isLocated = snake.isSnakeAt(i, j);
-            char drawChar = isLocated ? snake.getBodyMark() : ' ';
-            std::cout << " " << drawChar << " |";
+          char vacantCell = ' ';
+          Position currentPosition = {i, j};
+
+          bool isSnake = game.getSnake().isSnakeAt(currentPosition);
+          bool isFood = (game.getFoodPosition() == currentPosition);
+          assert(!(isFood && isSnake));
+          char drawChar = isSnake ? game.getSnake().getBodyMark() : vacantCell;
+          drawChar = isFood ? game.getFoodMark() : drawChar;
+
+          std::cout << " " << drawChar << " |";
         }
         std::cout << "\n";
         
@@ -96,14 +98,12 @@ int getch(void) {
 
 int main() {
     int boardDimension = 5;
-    Snake snake(boardDimension);
-    vector<vector<char>> snakeBoard;
-    initializeBoard(snakeBoard, boardDimension);
+    SnakeGame game(boardDimension);
 
     char input;
     while (true) {
         clearScreen();
-        displayBoard(snakeBoard, snake, boardDimension);
+        displayBoard(game, boardDimension);
         
         if (
 #ifdef _WIN32
@@ -120,16 +120,16 @@ int main() {
 #endif
             switch (input) {
                 case 'w':
-                    snake.moveUp();
+                    game.moveUp();
                     break;
                 case 's':
-                    snake.moveDown();
+                    game.moveDown();
                     break;
                 case 'a':
-                    snake.moveLeft();
+                    game.moveLeft();
                     break;
                 case 'd':
-                    snake.moveRight();
+                    game.moveRight();
                     break;
                 default:
                     cout << "Invalid input! Use w, a, s, d to move." << endl;
