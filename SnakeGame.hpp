@@ -2,7 +2,6 @@
 #define SNAKEGAME_HPP
 
 #include "Snake.hpp"
-#include "Board.hpp"
 
 class SnakeGame {
 private:
