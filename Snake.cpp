@@ -3,6 +3,21 @@
 
 using namespace std;
 
+static bool isLegitDirection(Direction newDirection, Direction currDirection) {
+  if(currDirection == Direction::UP)
+    return newDirection != Direction::DOWN;
+  else if(currDirection == Direction::DOWN)
+    return newDirection != Direction::UP;
+  else if(currDirection == Direction::LEFT)
+    return newDirection != Direction::RIGHT;
+  else if(currDirection == Direction::RIGHT)
+    return newDirection != Direction::LEFT;
+  else{
+    assert(false && "Unrecognized direction");
+    return false;
+  }
+}
+
 Snake::Snake(int boardDimension) : boardDimension(boardDimension) {
   Position initialPosition = {boardDimension/2, boardDimension/2};
   positionsSet[initialPosition] = true;
@@ -28,42 +43,46 @@ void Snake::addHead(Position newHeadPosition) {
 }
 
 bool Snake::moveUp() {
-  Direction up{-1,0};
+  Direction up = Direction::UP;
   return move(up);
 }
 
 bool Snake::moveDown() {
-  Direction down{1,0};
+  Direction down = Direction::DOWN;
   return move(down);
 }
 
 bool Snake::moveRight() {
-  Direction right{0,1};
+  Direction right = Direction::RIGHT;
   return move(right);
 }
 
 bool Snake::moveLeft() {
-  Direction left{0,-1};
+  Direction left = Direction::LEFT;
   return move(left);
 }
 
 bool Snake::move(Direction d) {
-  assert(d.first == 0 || d.second == 0);
-  assert(d.first != 0 || d.second != 0);
+  if(!isLegitDirection(d, currDirection)) {
+    // Ignore move if the direction pressed is illegal
+    return false;
+  }
 
-  pair<int,int> newHeadPosition = {getHead().first + d.first, getHead().second + d.second};
-  if(!checkLegitPosition(newHeadPosition)) {
+  pair<int,int> newHeadPosition = {getHead().first + directionsMap[d].first, getHead().second + directionsMap[d].second};
+  if(!isLegitPosition(newHeadPosition)) {
     gameLost();
   }
-  // Snake at the food
+
+  currDirection = d;
+  // Snake ate the food
   if(newHeadPosition == foodPosition) {
     addHead(newHeadPosition);
     return true;
   }
   // Snake did not eat the food
   else {
-    addHead(newHeadPosition);
     deleteTail();
+    addHead(newHeadPosition);
     return false;
   }
 }
@@ -74,16 +93,18 @@ void Snake::gameLost() const {
   exit(0);
 }
 
-bool Snake::checkLegitPosition(Position headPosition) {
-  int rowPosition = headPosition.first;
-  int colPosition = headPosition.second;
+bool Snake::isLegitPosition(Position newHeadPosition) {
+  int rowPosition = newHeadPosition.first;
+  int colPosition = newHeadPosition.second;
   if(rowPosition < 0 || boardDimension <= rowPosition) {
     return false;
   }
   else if(colPosition < 0 || boardDimension <= colPosition) {
     return false;
   }
-  else if(positionsSet.find({rowPosition, colPosition}) != positionsSet.end()) {
+  // Snake collide with itself, except the tail will be deleted
+  else if(positionsSet.find(newHeadPosition) != positionsSet.end()
+          && getTail() != newHeadPosition) {
     return false;
   }
   return true;
@@ -97,8 +118,8 @@ bool Snake::isSnakeAt(Position pos) const {
   return positionsSet.find(pos) != positionsSet.end();
 }
 
-char Snake::getBodyMark() const {
-  return snakeBodyMark;
+char Snake::getSnakeMark(Position bodyPos) const {
+  return bodyPos == getHead() ? snakeHeadMark : snakeBodyMark;
 }
 
 void Snake::setFoodPosition(Position position) {

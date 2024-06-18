@@ -1,7 +1,7 @@
-#include "SnakeGame.hpp"
-
 #include <cstdlib> // for rand() 
 #include <ctime>   // for time()
+
+#include "SnakeGame.hpp"
 
 Position SnakeGame::getPosition() const {
   // Seed the random number generator

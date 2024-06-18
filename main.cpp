@@ -11,8 +11,6 @@
 #include <fcntl.h>
 #endif
 
-// #include "Snake.hpp"
-// #include "Board.hpp"
 #include "SnakeGame.hpp"
 
 using namespace std;
@@ -33,7 +31,7 @@ void displayBoard(const SnakeGame& game, int dim) {
           bool isSnake = game.getSnake().isSnakeAt(currentPosition);
           bool isFood = (game.getFoodPosition() == currentPosition);
           assert(!(isFood && isSnake));
-          char drawChar = isSnake ? game.getSnake().getBodyMark() : vacantCell;
+          char drawChar = isSnake ? game.getSnake().getSnakeMark(currentPosition) : vacantCell;
           drawChar = isFood ? game.getFoodMark() : drawChar;
 
           std::cout << " " << drawChar << " |";
@@ -62,26 +60,45 @@ int kbhit(void) {
     int ch;
     int oldf;
 
+    // Get the current terminal attributes and save them in oldt
     tcgetattr(STDIN_FILENO, &oldt);
+
+    // Copy the old attributes to newt, which we will modify
     newt = oldt;
+
+    // Disable canonical mode and echo mode
     newt.c_lflag &= ~(ICANON | ECHO);
+
+    // Set the terminal attributes to the new values immediately
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+    // Get the current file status flags for stdin and save them in oldf
     oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+
+    // Set the stdin file descriptor to non-blocking mode
     fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
 
+    // Read a character from stdin
     ch = getchar();
 
+    // Restore the original terminal attributes
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+    // Restore the original file status flags for stdin
     fcntl(STDIN_FILENO, F_SETFL, oldf);
 
+    // Check if a character was read (i.e., not EOF)
     if (ch != EOF) {
+        // If a character was read, push it back to stdin
         ungetc(ch, stdin);
-        return 1;
+        return 1; // Indicate that a key was hit
     }
 
-    return 0;
+    return 0; // Indicate that no key was hit
 }
 
+// Implements getchar, but without Canonical Mode, which requires to press 'Enter' to accept input,
+// and without Echoing, which prints on the screen the character that was pressed.
 int getch(void) {
     struct termios oldt, newt;
     int ch;

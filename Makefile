@@ -9,7 +9,7 @@ TARGET = SnakeGame.exe
 BUILD_DIR = build
 
 # Source files
-SRCS = main.cpp Board.cpp Snake.cpp SnakeGame.cpp
+SRCS = main.cpp Snake.cpp SnakeGame.cpp
 
 # Object files in the build directory
 OBJS = $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
@@ -32,13 +32,10 @@ $(BUILD_DIR):
 $(BUILD_DIR)/main.o: main.cpp SnakeGame.hpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c main.cpp -o $@
 
-$(BUILD_DIR)/Board.o: Board.cpp Board.hpp Snake.hpp Common.hpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c Board.cpp -o $@
-
 $(BUILD_DIR)/Snake.o: Snake.cpp Snake.hpp Common.hpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c Snake.cpp -o $@
 
-$(BUILD_DIR)/SnakeGame.o: SnakeGame.cpp SnakeGame.hpp Snake.hpp Board.hpp | $(BUILD_DIR)
+$(BUILD_DIR)/SnakeGame.o: SnakeGame.cpp SnakeGame.hpp Snake.hpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c SnakeGame.cpp -o $@
 
 # Rule to clean the build artifacts
