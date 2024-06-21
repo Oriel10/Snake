@@ -22,7 +22,6 @@ public:
   Position getFoodPosition() const;
   char getFoodMark() const;
   const Snake& getSnake() const;
-
 };
 
 #endif // SNAKEGAME_HPP
