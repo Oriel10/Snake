@@ -15,8 +15,6 @@ struct pair_hash {
   }
 };
 
-enum Direction{UP, DOWN, LEFT, RIGHT};
-
 class Snake {
 private:
   std::unordered_map<Direction, std::pair<int,int>> directionsMap{
@@ -28,8 +26,8 @@ private:
 
   using isLocated = bool;
 
-  const char snakeBodyMark = '0';
-  const char snakeHeadMark = 'O';
+  const char snakeBodyMark = 'O';
+  const char snakeHeadMark = '0';
   Direction currDirection = Direction::UP;
   int boardDimension;
   Position initialPosition;
@@ -55,6 +53,7 @@ public:
   bool isSnakeAt(Position p) const;
   char getSnakeMark(Position p) const;
   void setFoodPosition(Position p);
+  bool isLegitDirection(Direction newDirection, Direction currDirection) const;
 };
 
 #endif // SNAKE_HPP

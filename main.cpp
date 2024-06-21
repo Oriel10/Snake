@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
-
+#include <time.h>
 #ifdef _WIN32
 #include <conio.h>  // For _kbhit() and _getch() on Windows
 #include <windows.h>  // For Sleep() on Windows
@@ -144,32 +144,57 @@ int main() {
   SnakeGame game(boardDimension);
 
   char input;
+  Direction currDirection = Direction::UP;
+  time_t lastMoveTime = time(nullptr);
   while (true) {
     clear_adapter();
     displayBoard(game, boardDimension);
-    
-    if (kbhit_adapter()) {
-      input = getch_adapter();
-      switch (input) {
-        case 'w':
-          game.moveUp();
-          break;
-        case 's':
-          game.moveDown();
-          break;
-        case 'a':
-          game.moveLeft();
-          break;
-        case 'd':
-          game.moveRight();
-          break;
-        default:
-          cout << "Invalid input! Use w, a, s, d to move." << endl;
-          break;
+
+    Direction tmpDirection = currDirection;
+    time_t currentTime = time(nullptr);
+    while(difftime(currentTime, lastMoveTime) <= 0.3){
+      currentTime = time(nullptr);
+      if (kbhit_adapter()) {
+        input = getch_adapter();
+        switch (input) {
+          case 'w':
+            tmpDirection = game.getSnake().isLegitDirection(UP, currDirection) ? UP : tmpDirection;
+            break;
+          case 's':
+            tmpDirection = game.getSnake().isLegitDirection(DOWN, currDirection) ? DOWN : tmpDirection;
+            break;
+          case 'a':
+            tmpDirection = game.getSnake().isLegitDirection(LEFT, currDirection) ? LEFT : tmpDirection;
+            break;
+          case 'd':
+            tmpDirection = game.getSnake().isLegitDirection(RIGHT, currDirection) ? RIGHT : tmpDirection;
+            break;
+          default:
+            cout << "Invalid input! Use w, a, s, d to move." << endl;
+            break;
+        }
       }
     }
+    currDirection = tmpDirection;
+    switch (currDirection) {
+      case UP:
+        game.moveUp();
+        break;
+      case DOWN:
+        game.moveDown();
+        break;
+      case LEFT:
+        game.moveLeft();
+        break;
+      case RIGHT:
+        game.moveRight();
+        break;
+      default:
+        break;
+    }
+    lastMoveTime = currentTime;
     sleep_adapter();
   }
 
-    return 0;
+  return 0;
 }

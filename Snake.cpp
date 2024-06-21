@@ -3,21 +3,6 @@
 
 using namespace std;
 
-static bool isLegitDirection(Direction newDirection, Direction currDirection) {
-  if(currDirection == Direction::UP)
-    return newDirection != Direction::DOWN;
-  else if(currDirection == Direction::DOWN)
-    return newDirection != Direction::UP;
-  else if(currDirection == Direction::LEFT)
-    return newDirection != Direction::RIGHT;
-  else if(currDirection == Direction::RIGHT)
-    return newDirection != Direction::LEFT;
-  else{
-    assert(false && "Unrecognized direction");
-    return false;
-  }
-}
-
 Snake::Snake(int boardDimension) : boardDimension(boardDimension) {
   Position initialPosition = {boardDimension/2, boardDimension/2};
   positionsSet[initialPosition] = true;
@@ -124,4 +109,19 @@ char Snake::getSnakeMark(Position bodyPos) const {
 
 void Snake::setFoodPosition(Position position) {
   foodPosition = position;
+}
+
+bool Snake::isLegitDirection(Direction newDirection, Direction currDirection) const {
+  if(currDirection == Direction::UP)
+    return newDirection != Direction::DOWN;
+  else if(currDirection == Direction::DOWN)
+    return newDirection != Direction::UP;
+  else if(currDirection == Direction::LEFT)
+    return newDirection != Direction::RIGHT;
+  else if(currDirection == Direction::RIGHT)
+    return newDirection != Direction::LEFT;
+  else{
+    assert(false && "Unrecognized direction");
+    return false;
+  }
 }
