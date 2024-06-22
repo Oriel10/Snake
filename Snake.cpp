@@ -27,31 +27,31 @@ void Snake::addHead(Position newHeadPosition) {
   positionsSet[newHeadPosition] = true;
 }
 
-void Snake::moveUp() {
-  move(Direction::UP);
+bool Snake::moveUp() {
+  return move(Direction::UP);
 }
 
-void Snake::moveDown() {
-  move(Direction::DOWN);
+bool Snake::moveDown() {
+  return move(Direction::DOWN);
 }
 
-void Snake::moveRight() {
-  move(Direction::RIGHT);
+bool Snake::moveRight() {
+  return move(Direction::RIGHT);
 }
 
-void Snake::moveLeft() {
-  move(Direction::LEFT);
+bool Snake::moveLeft() {
+  return move(Direction::LEFT);
 }
 
-void Snake::move(Direction d) {
+bool Snake::move(Direction d) {
   if(!isLegitDirection(d, currDirection)) {
     // Ignore move if the direction pressed is illegal
-    return;
+    return true;
   }
 
   pair<int,int> newHeadPosition = {getHead().first + directionsMap[d].first, getHead().second + directionsMap[d].second};
   if(!isLegitPosition(newHeadPosition)) {
-    gameLost();
+    return false;
   }
 
   currDirection = d;
@@ -59,21 +59,15 @@ void Snake::move(Direction d) {
   if(newHeadPosition == foodPosition) {
     addHead(newHeadPosition);
     eatLastMove = true;
-    return;
+    return true;
   }
   // Snake did not eat the food
   else {
     deleteTail();
     addHead(newHeadPosition);
     eatLastMove = false;
-    return;
+    return true;
   }
-}
-
-void Snake::gameLost() const {
-  cout << "You lost!" << endl;
-  cout << "Final Score: " << snakeBody.size() << endl;
-  exit(0);
 }
 
 bool Snake::isLegitPosition(Position newHeadPosition) {
@@ -126,4 +120,8 @@ bool Snake::isLegitDirection(Direction newDirection, Direction currDirection) co
 
 bool Snake::didEatLastMove() const {
   return eatLastMove;
+}
+
+int Snake::getLength() const{
+  return snakeBody.size();
 }

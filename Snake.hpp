@@ -18,9 +18,8 @@ private:
   const char snakeBodyMark = 'O';
   const char snakeHeadMark = '0';
   bool eatLastMove = false;
-  Direction currDirection = Direction::UP;
+  Direction currDirection = Direction::STOP;
   int boardDimension;
-  Position initialPosition;
   std::unordered_map<Position, isLocated, pair_hash> positionsSet;
   std::deque<Position> snakeBody;
   Position foodPosition;
@@ -32,12 +31,14 @@ public:
   Position getTail() const;
   void deleteTail();
   void addHead(Position newHeadPosition);
-  void moveUp();
-  void moveDown();
-  void moveRight();
-  void moveLeft();
-  void move(Direction d);
-  void gameLost() const;
+  
+  // Returns False if move is illegal and true otherwise
+  bool moveUp();
+  bool moveDown();
+  bool moveRight();
+  bool moveLeft();
+  bool move(Direction d);
+
   bool isLegitPosition(Position p);
   bool isSnakeAt(int x, int y) const;
   bool isSnakeAt(Position p) const;
@@ -45,6 +46,9 @@ public:
   void setFoodPosition(Position p);
   bool isLegitDirection(Direction newDirection, Direction currDirection) const;
   bool didEatLastMove() const;
+  int getLength() const;
+
+  friend class SnakeGame;
 };
 
 #endif // SNAKE_HPP
