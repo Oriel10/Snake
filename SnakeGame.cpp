@@ -18,29 +18,29 @@ SnakeGame::SnakeGame(int boardDimension) : boardDimension(boardDimension), snake
 }
 
 void SnakeGame::moveUp() {
-  bool didEat = snake.moveUp();
-  if(didEat) {
+  snake.moveUp();
+  if(snake.didEatLastMove()) {
     setFoodPosition();
   }
 }
 
 void SnakeGame::moveDown() {
-  bool didEat = snake.moveDown();
-  if(didEat) {
+  snake.moveDown();
+  if(snake.didEatLastMove()) {
     setFoodPosition();
   }
 }
 
 void SnakeGame::moveRight() {
-  bool didEat = snake.moveRight();
-  if(didEat) {
+  snake.moveRight();
+  if(snake.didEatLastMove()) {
     setFoodPosition();
   }
 }
 
 void SnakeGame::moveLeft() {
-  bool didEat = snake.moveLeft();
-  if(didEat) {
+  snake.moveLeft();
+  if(snake.didEatLastMove()) {
     setFoodPosition();
   }
 }

@@ -27,30 +27,26 @@ void Snake::addHead(Position newHeadPosition) {
   positionsSet[newHeadPosition] = true;
 }
 
-bool Snake::moveUp() {
-  Direction up = Direction::UP;
-  return move(up);
+void Snake::moveUp() {
+  move(Direction::UP);
 }
 
-bool Snake::moveDown() {
-  Direction down = Direction::DOWN;
-  return move(down);
+void Snake::moveDown() {
+  move(Direction::DOWN);
 }
 
-bool Snake::moveRight() {
-  Direction right = Direction::RIGHT;
-  return move(right);
+void Snake::moveRight() {
+  move(Direction::RIGHT);
 }
 
-bool Snake::moveLeft() {
-  Direction left = Direction::LEFT;
-  return move(left);
+void Snake::moveLeft() {
+  move(Direction::LEFT);
 }
 
-bool Snake::move(Direction d) {
+void Snake::move(Direction d) {
   if(!isLegitDirection(d, currDirection)) {
     // Ignore move if the direction pressed is illegal
-    return false;
+    return;
   }
 
   pair<int,int> newHeadPosition = {getHead().first + directionsMap[d].first, getHead().second + directionsMap[d].second};
@@ -62,13 +58,15 @@ bool Snake::move(Direction d) {
   // Snake ate the food
   if(newHeadPosition == foodPosition) {
     addHead(newHeadPosition);
-    return true;
+    eatLastMove = true;
+    return;
   }
   // Snake did not eat the food
   else {
     deleteTail();
     addHead(newHeadPosition);
-    return false;
+    eatLastMove = false;
+    return;
   }
 }
 
@@ -124,4 +122,8 @@ bool Snake::isLegitDirection(Direction newDirection, Direction currDirection) co
     assert(false && "Unrecognized direction");
     return false;
   }
+}
+
+bool Snake::didEatLastMove() const {
+  return eatLastMove;
 }

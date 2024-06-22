@@ -1,8 +1,18 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
-enum Direction{UP, DOWN, LEFT, RIGHT};
+enum Direction{ STOP = 0, UP, DOWN, LEFT, RIGHT };
+
+struct pair_hash {
+  template <class T1, class T2>
+  std::size_t operator()(const std::pair<T1, T2>& p) const {
+    auto h1 = std::hash<T1>{}(p.first);
+    auto h2 = std::hash<T2>{}(p.second);
+    return h1 ^ (h2 << 1); // Combine the hash values
+  }
+};
 
 using Position = std::pair<int, int>;
+using isLocated = bool;
 
 #endif // COMMON_HPP
